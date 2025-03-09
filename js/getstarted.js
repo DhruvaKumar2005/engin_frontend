@@ -12,22 +12,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (fullName && email && role && location) {
             const userData = { fullName, email, role, location, insights };
+            
+            // Show loading indicator
+            const submitBtn = document.querySelector(".submit-btn");
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.textContent = "Submitting...";
+            submitBtn.disabled = true;
 
             try {
-                const response = await fetch("https://engin-backend.onrender.com/api/register", {
+                // Update to use your render.com URL
+                const response = await fetch("https://engin-backend-wy7x.onrender.com/api/register", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(userData),
                 });
 
+                const data = await response.json();
+
                 if (response.ok) {
                     window.location.href = "success.html";  // Ensure correct path
                 } else {
-                    alert("Registration failed. Please try again.");
+                    alert(`Registration failed: ${data.error || "Please try again."}`);
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert("Failed to connect to the server.");
+                alert("Failed to connect to the server. Please try again later.");
+            } finally {
+                // Reset button state
+                submitBtn.textContent = originalBtnText;
+                submitBtn.disabled = false;
             }
         } else {
             alert("Please fill out all required fields.");
